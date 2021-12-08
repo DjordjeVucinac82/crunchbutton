@@ -41,7 +41,7 @@ $GLOBALS['config'] = [
 
 //'Cana:../../vendor/arzynik/cana/src',
 
-if ($_ENV['DOCKER']) {
+if (isset($_ENV['DOCKER']) && $_ENV['DOCKER']) {
 	$GLOBALS['config']['dirs']['cache'] = '/tmp/';
 }
 

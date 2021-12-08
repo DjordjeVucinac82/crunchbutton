@@ -40,4 +40,5 @@ services:
       - MYSQL_DATABASE=api_db
     volumes:
       - ./data/db:/var/lib/mysql
+      - ./db:/app/db
     container_name: cb_db

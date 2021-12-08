@@ -52,3 +52,5 @@ composer.lock
 .env
 
 node_modules
+
+Logs/Nginx/*.log

@@ -9,8 +9,8 @@
  * reguardless of what it is.
  *
  */
-error_reporting(E_ALL ^ ( E_STRICT | E_DEPRECATED | E_NOTICE ) );
-
+#error_reporting(E_ALL ^ ( E_STRICT | E_DEPRECATED | E_NOTICE ) );
+error_reporting(0);
 putenv('DEBUG=true');
 
 ini_set('display_errors',true);
@@ -23,7 +23,7 @@ if (function_exists('php_sapi_name') && php_sapi_name() == 'cli-server') {
 	$path = pathinfo($_SERVER['SCRIPT_FILENAME']);
 
 	$file = substr($_SERVER['SCRIPT_NAME'],1);
-	
+
 	$allowed = ['scss','php'];
 	if (file_exists($file) && !in_array($path['extension'], $allowed)) {
 
@@ -55,7 +55,7 @@ if (isset($_REQUEST['__url']) && $_REQUEST['__url'] == 'index.php') {
 }
 
 // no reason to pass __url
-if (!$_REQUEST['__url']) {
+else {
 	$request = explode('?', $_SERVER['REQUEST_URI'], 2)[0];
 	$dir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
 	$base = substr($dir, -1) == '/' ? $dir : $dir.'/';
@@ -70,7 +70,7 @@ if (isset($_GET['__host'])) {
 	$_COOKIE['__host'] = $_GET['__host'];
 }
 
-if ($_COOKIE['__host']) {
+if (isset($_COOKIE['__host']) && $_COOKIE['__host']) {
 	$_SERVER['HTTP_HOST'] = $_SERVER['SERVER_NAME'] = $_REQUEST['__host'];
 }
 
@@ -79,13 +79,15 @@ if (preg_match('/^www\..*$/',$_SERVER['HTTP_HOST'])) {
 	exit;
 }
 
-if ($_ENV['DEBUG']) {
+$debug = isset($_ENV['DEBUG']) && $_ENV['DEBUG'];
+
+if ($debug) {
 	error_log('>> PAGE START >> '.$_SERVER['REQUEST_URI']);
 }
 
 require_once '../include/crunchbutton.php';
 
-if ($_ENV['DEBUG']) {
+if ($debug) {
 	error_log('>> DISPLAYING PAGE...');
 }
 $page = ltrim($_SERVER['DOCUMENT_URI'], '/');
@@ -93,7 +95,7 @@ $page = ltrim($_SERVER['DOCUMENT_URI'], '/');
 Cana::app()->buildPages($page);
 Cana::app()->displayPage($page);
 
-if ($_ENV['DEBUG']) {
+if ($debug) {
 	register_shutdown_function(function() {
 		error_log('<< PAGE FINISHED << '.$_SERVER['REQUEST_URI']);
 	});
